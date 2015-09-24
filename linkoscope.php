@@ -30,4 +30,12 @@ function linkoscope_post_type_init () {
 	register_post_type( 'linkoscope_link', $typeArgs );
 }
 
+function linkoscope_add_rest_query($vars)
+{
+	$vars[] = 'meta_key';
+	return $vars;
+}
+
 add_action('init', 'linkoscope_post_type_init');
+
+add_filter('rest_query_vars', 'linkoscope_add_rest_query');
