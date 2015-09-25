@@ -36,6 +36,30 @@ function linkoscope_add_rest_query($vars)
 	return $vars;
 }
 
+function linkoscope_set_meta( $value, $object, $field_name ) {
+	error_log("$field_name: $value");
+	$ret = update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
+	error_log("$field_name: $value = $ret");
+	return $ret;
+}
+
+function linkoscope_get_meta( $object, $field_name, $request ) {
+	return get_post_meta( $object[ 'id' ], $field_name );
+}
+
+function linkoscope_register_fields(){
+	$callbacks = array(
+		'get_callback'    => 'linkoscope_get_meta',
+		'update_callback' => 'linkoscope_set_meta',
+		'schema'          => null,
+	);
+	register_api_field( 'linkoscope_link','linkoscope_score', $callbacks);
+	register_api_field( 'linkoscope_link','linkoscope_likes', $callbacks);
+}
+
 add_action('init', 'linkoscope_post_type_init');
 
+add_action( 'rest_api_init', 'linkoscope_register_fields' );
+
 add_filter('rest_query_vars', 'linkoscope_add_rest_query');
+
