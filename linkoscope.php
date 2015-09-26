@@ -15,6 +15,16 @@ function linkoscope_post_type_init () {
 		'custom-fields',
 	);
 
+	$capabilities = array(
+		'edit_post',
+		'read_post',
+		'delete_post',
+		'edit_posts',
+		'edit_others_posts',
+		'publish_posts',
+		'read_private_posts'
+	);
+
 	$typeArgs = array(
 		'label'               => __('Linkoscope Links'),
 		'public'              => true, // if false, it won't show in WP-API
@@ -26,6 +36,7 @@ function linkoscope_post_type_init () {
 		'show_ui'             => false,
 		'supports'            => $supports,
 		'capability_type'     => 'post',
+		'capabilities'        => $capabilities,
 	);
 	register_post_type( 'linkoscope_link', $typeArgs );
 }
@@ -53,8 +64,18 @@ function linkoscope_register_fields(){
 		'update_callback' => 'linkoscope_set_meta',
 		'schema'          => null,
 	);
+
 	register_api_field( 'linkoscope_link','linkoscope_score', $callbacks);
 	register_api_field( 'linkoscope_link','linkoscope_likes', $callbacks);
+
+	$raw = array(
+		'schema' => array(
+			'raw' => array ( 'context' => array( 'view', 'edit' ) ),
+		)
+	);
+
+	register_api_field( 'linkoscope_link','title', $raw);
+	register_api_field( 'linkoscope_link','content', $raw);
 }
 
 add_action('init', 'linkoscope_post_type_init');
