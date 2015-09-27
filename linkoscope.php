@@ -16,7 +16,7 @@ function linkoscope_post_type_init () {
 	);
 
 	$capabilities = array(
-		'edit_post',
+		'edit_post' => 'edit_others_posts',
 		'read_post',
 		'delete_post',
 		'edit_posts',
@@ -35,10 +35,26 @@ function linkoscope_post_type_init () {
 		'show_in_nav_menus'   => false,
 		'show_ui'             => false,
 		'supports'            => $supports,
-		'capability_type'     => 'post',
-		'capabilities'        => $capabilities,
+		'capability_type'     => 'linkoscope_link',
+		'map_meta_cap'        => true,
+		//'capabilities'        => $capabilities,
 	);
 	register_post_type( 'linkoscope_link', $typeArgs );
+
+	$roles = array('editor', 'author', 'contributor', 'subscriber');
+	$caps = array(
+		'edit_others_linkoscope_links',
+		'edit_published_linkoscope_links',
+		'edit_published_linkoscope_links',
+		'edit_linkoscope_links',
+		'publish_linkoscope_links',
+	);
+
+	foreach($roles as $role) {
+		foreach ($caps as $cap) {
+			get_role($role)->add_cap($cap);
+		}
+	}
 }
 
 function linkoscope_add_rest_query($vars)
@@ -48,9 +64,7 @@ function linkoscope_add_rest_query($vars)
 }
 
 function linkoscope_set_meta( $value, $object, $field_name ) {
-	error_log("$field_name: $value");
 	$ret = update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
-	error_log("$field_name: $value = $ret");
 	return $ret;
 }
 
@@ -68,9 +82,14 @@ function linkoscope_register_fields(){
 	register_api_field( 'linkoscope_link','linkoscope_score', $callbacks);
 	register_api_field( 'linkoscope_link','linkoscope_likes', $callbacks);
 
+
 	$raw = array(
 		'schema' => array(
-			'raw' => array ( 'context' => array( 'view', 'edit' ) ),
+			'type' => 'string',
+			'raw' => array (
+				'type'        => 'string',
+				'description' => 'Title for the object, as it exists in the database.',
+				'context' => array( 'view', 'edit' ) ),
 		)
 	);
 
