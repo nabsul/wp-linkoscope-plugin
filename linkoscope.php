@@ -15,16 +15,6 @@ function linkoscope_post_type_init () {
 		'custom-fields',
 	);
 
-	$capabilities = array(
-		'edit_post' => 'edit_others_posts',
-		'read_post',
-		'delete_post',
-		'edit_posts',
-		'edit_others_posts',
-		'publish_posts',
-		'read_private_posts'
-	);
-
 	$typeArgs = array(
 		'label'               => __('Linkoscope Links'),
 		'public'              => true, // if false, it won't show in WP-API
@@ -41,13 +31,14 @@ function linkoscope_post_type_init () {
 	);
 	register_post_type( 'linkoscope_link', $typeArgs );
 
-	$roles = array('editor', 'author', 'contributor', 'subscriber');
+	$roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
 	$caps = array(
 		'edit_others_linkoscope_links',
 		'edit_published_linkoscope_links',
 		'edit_published_linkoscope_links',
 		'edit_linkoscope_links',
 		'publish_linkoscope_links',
+		'create_linkoscope_links',
 	);
 
 	foreach($roles as $role) {
