@@ -59,7 +59,11 @@ function linkoscope_set_meta( $value, $object, $field_name ) {
 }
 
 function linkoscope_get_meta( $object, $field_name, $request ) {
-	return get_post_meta( $object[ 'id' ], $field_name );
+	$meta = get_post_meta( $object[ 'id' ], $field_name );
+	$result = null;
+	if (is_array($meta) && count($meta) > 0)
+		$result = $meta[0];
+	return $result;
 }
 
 function linkoscope_set_comment_meta( $value, $object, $field_name ) {
@@ -68,7 +72,7 @@ function linkoscope_set_comment_meta( $value, $object, $field_name ) {
 
 function linkoscope_get_comment_meta( $object, $field_name, $request ) {
 	$meta = get_comment_meta( $object[ 'id' ], $field_name );
-	$result = 0;
+	$result = null;
 	if (is_array($meta) && count($meta) > 0)
 		$result = $meta[0];
 	return $result;
@@ -90,7 +94,6 @@ function linkoscope_register_fields(){
 		'schema'          => null,
 	);
 
-	register_api_field( 'comment', 'linkoscope_score', $callbacks);
 	register_api_field( 'comment', 'linkoscope_likes', $callbacks);
 
 	$raw = array(
