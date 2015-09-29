@@ -55,12 +55,23 @@ function linkoscope_add_rest_query($vars)
 }
 
 function linkoscope_set_meta( $value, $object, $field_name ) {
-	$ret = update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
-	return $ret;
+	return update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
 }
 
 function linkoscope_get_meta( $object, $field_name, $request ) {
 	return get_post_meta( $object[ 'id' ], $field_name );
+}
+
+function linkoscope_set_comment_meta( $value, $object, $field_name ) {
+	return update_comment_meta( $object->comment_ID, $field_name, strip_tags( $value ) );
+}
+
+function linkoscope_get_comment_meta( $object, $field_name, $request ) {
+	$meta = get_comment_meta( $object[ 'id' ], $field_name );
+	$result = 0;
+	if (is_array($meta) && count($meta) > 0)
+		$result = $meta[0];
+	return $result;
 }
 
 function linkoscope_register_fields(){
@@ -73,6 +84,14 @@ function linkoscope_register_fields(){
 	register_api_field( 'linkoscope_link','linkoscope_score', $callbacks);
 	register_api_field( 'linkoscope_link','linkoscope_likes', $callbacks);
 
+	$callbacks = array(
+		'get_callback'    => 'linkoscope_get_comment_meta',
+		'update_callback' => 'linkoscope_set_comment_meta',
+		'schema'          => null,
+	);
+
+	register_api_field( 'comment', 'linkoscope_score', $callbacks);
+	register_api_field( 'comment', 'linkoscope_likes', $callbacks);
 
 	$raw = array(
 		'schema' => array(
@@ -84,8 +103,18 @@ function linkoscope_register_fields(){
 		)
 	);
 
+	$int = array(
+		'schema' => array(
+			'type' => 'int',
+			'description'  => 'Votes on a comment.',
+			'type'         => 'integer',
+		),
+	);
+
 	register_api_field( 'linkoscope_link','title', $raw);
 	register_api_field( 'linkoscope_link','content', $raw);
+	register_api_field( 'comment','content', $raw);
+	register_api_field( 'comment', 'karma', $int);
 }
 
 add_action('init', 'linkoscope_post_type_init');
