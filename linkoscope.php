@@ -39,6 +39,7 @@ function linkoscope_post_type_init () {
 		'edit_linkoscope_links',
 		'publish_linkoscope_links',
 		'create_linkoscope_links',
+		'moderate_comments',
 	);
 
 	foreach($roles as $role) {
