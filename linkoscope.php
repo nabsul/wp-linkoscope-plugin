@@ -60,6 +60,16 @@ function linkoscope_set_meta( $value, $object, $field_name ) {
 }
 
 function linkoscope_get_meta( $object, $field_name, $request ) {
+	if ($field_name == 'author_name'){
+		$user = get_userdata($object['author']);
+		return $user->display_name;
+	}
+
+	if ($field_name == 'comment_count'){
+		$comments = get_comment_count($object['id']);
+		return $comments['approved'];
+	}
+
 	$meta = get_post_meta( $object[ 'id' ], $field_name );
 	$result = null;
 	if (is_array($meta) && count($meta) > 0)
@@ -68,6 +78,7 @@ function linkoscope_get_meta( $object, $field_name, $request ) {
 }
 
 function linkoscope_set_comment_meta( $value, $object, $field_name ) {
+	if ($field_name == 'author_name') return;
 	return update_comment_meta( $object->comment_ID, $field_name, strip_tags( $value ) );
 }
 
@@ -88,6 +99,8 @@ function linkoscope_register_fields(){
 
 	register_api_field( 'linkoscope_link','linkoscope_score', $callbacks);
 	register_api_field( 'linkoscope_link','linkoscope_likes', $callbacks);
+	register_api_field( 'linkoscope_link','author_name', $callbacks);
+	register_api_field( 'linkoscope_link','comment_count', $callbacks);
 
 	$callbacks = array(
 		'get_callback'    => 'linkoscope_get_comment_meta',
