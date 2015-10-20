@@ -31,27 +31,57 @@ function linkoscope_post_type_init () {
 		'supports'            => $supports,
 		'capability_type'     => 'linkoscope_link',
 		'map_meta_cap'        => true,
-		//'capabilities'        => $capabilities,
 	);
+
 	register_post_type( 'linkoscope_link', $typeArgs );
+}
 
-	$roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
-	$caps = array(
-		'edit_others_linkoscope_links',
-		'edit_published_linkoscope_links',
-		'edit_published_linkoscope_links',
-		'edit_linkoscope_links',
-		'publish_linkoscope_links',
-		'create_linkoscope_links',
-		'moderate_comments',
+function linkoscope_check_capability($cap, $roles){
+	$order = array(
+		'administrator' => 0,
+		'editor' => 1,
 	);
 
-	foreach($roles as $role) {
-		foreach ($caps as $cap) {
-			get_role($role)->add_cap($cap);
+	$roleMap = array(
+		'read_private_linkoscope_links' => 'administrator',
+		'publish_linkoscope_links' => 'administrator',
+
+		'edit_linkoscope_links' => 'administrator',
+		'edit_published_linkoscope_links' => 'administrator',
+		'edit_others_linkoscope_links' => 'administrator',
+
+		'delete_published_linkoscope_links' => 'editor',
+		'delete_others_linkoscope_links' => 'editor',
+	);
+
+	if (!isset($roleMap[$cap])){
+		return false;
+	}
+
+	foreach ($roles as $role){
+		if (!isset($order[$role])){
+			return false;
+		}
+
+		if ($order[$role] <= $order[$roleMap[$cap]]){
+			return true;
 		}
 	}
+
+	return false;
 }
+
+function linkoscope_has_cap_filter($caps, $cap, $args, WP_User $user){
+	$roles = $user->roles;
+	$cap = array_filter($cap, function($c){return preg_match('/linkoscope/', $c) == 1;});
+	foreach ($cap as $c){
+		$caps[$c] = linkoscope_check_capability($c, $roles);
+	}
+
+	return $caps;
+}
+
+add_filter('user_has_cap', 'linkoscope_has_cap_filter', 10, 4);
 
 function linkoscope_add_rest_query($vars)
 {
