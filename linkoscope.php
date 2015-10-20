@@ -1,7 +1,11 @@
 <?php
 /**
- * Plugin Name: Linkoscope Post Type
- * Version 0.1
+ * Plugin Name: LinkoScope REST API Extension
+ * Description: Adds a post type and REST endpoint for LinkoScope links, used by the LinkoScope WebApp.
+ * Author: Nabeel Sulieman
+ * Version: 0.1
+ * Plugin URI: https://github.com/nabsul/wp-linkoscope-plugin
+ * License: MIT
  */
 
 function linkoscope_post_type_init () {
