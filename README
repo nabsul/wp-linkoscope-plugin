@@ -1,2 +1,0 @@
-This plugin is required for the LinkoScope web app to interact with wp-api.
-It creates a new post type for the links that are used by the app.
