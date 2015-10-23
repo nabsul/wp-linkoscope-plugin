@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 function linkoscope_set_meta( $value, $object, $field_name ) {
 	return update_post_meta( $object->ID, $field_name, strip_tags( $value ) );
 }

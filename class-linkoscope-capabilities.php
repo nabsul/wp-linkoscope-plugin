@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 function linkoscope_has_cap_filter($caps, $cap, $args, WP_User $user){
 	$roles = $user->roles;
 	$cap = array_filter($cap, function($c){return preg_match('/linkoscope/', $c) == 1;});

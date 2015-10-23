@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 function linkoscope_post_type_init () {
 	$supports = array('title',
 		'editor',

@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 function linkoscope_set_comment_meta( $value, $object, $field_name ) {
 	if ($field_name == 'author_name') return;
 	return update_comment_meta( $object->comment_ID, $field_name, strip_tags( $value ) );

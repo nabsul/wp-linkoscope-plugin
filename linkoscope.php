@@ -8,6 +8,10 @@
  * License: MIT
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 include __DIR__ . '/class-linkoscope-post-type.php';
 add_action('init', 'linkoscope_post_type_init');
 add_filter('rest_query_vars', 'linkoscope_add_rest_query');
