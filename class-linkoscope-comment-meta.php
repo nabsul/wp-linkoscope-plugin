@@ -4,16 +4,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-function linkoscope_set_comment_meta( $value, $object, $field_name ) {
-	if ($field_name == 'author_name') return;
-	return update_comment_meta( $object->comment_ID, $field_name, strip_tags( $value ) );
-}
+if ( ! class_exists( 'LinkoScope_Comment_Meta' ) ) :
+	class LinkoScope_Comment_Meta{
+		public function run(){
+			add_action( 'rest_api_init', [$this, 'register_fields'] );
+		}
 
-function linkoscope_get_comment_meta( $object, $field_name, $request ) {
-	$meta = get_comment_meta( $object[ 'id' ], $field_name );
-	$result = null;
-	if (is_array($meta) && count($meta) > 0)
-		$result = $meta[0];
-	return $result;
-}
+		public function register_fields(){
+			$callbacks = array(
+				'get_callback'    => [$this, 'get_meta'],
+				'update_callback' => [$this, 'set_meta'],
+				'schema'          => null,
+			);
+			register_api_field( 'comment', 'linkoscope_likes', $callbacks);
+
+			$raw = array(
+				'schema' => array(
+					'type' => 'string',
+					'raw' => array (
+						'type'        => 'string',
+						'description' => 'Title for the object, as it exists in the database.',
+						'context' => array( 'view', 'edit' ) ),
+				)
+			);
+			register_api_field( 'comment','content', $raw);
+
+			$int = array(
+				'schema' => array(
+					'type' => 'int',
+					'description'  => 'Votes on a comment.',
+					'type'         => 'integer',
+				),
+			);
+			register_api_field( 'comment', 'karma', $int);
+		}
+
+		public function set_meta( $value, $object, $field_name ) {
+			if ($field_name == 'author_name') return;
+			return update_comment_meta( $object->comment_ID, $field_name, strip_tags( $value ) );
+		}
+
+		public function get_meta( $object, $field_name, $request ) {
+			$meta = get_comment_meta( $object[ 'id' ], $field_name );
+			$result = null;
+			if (is_array($meta) && count($meta) > 0)
+				$result = $meta[0];
+			return $result;
+		}
+	}
+endif;
+
 

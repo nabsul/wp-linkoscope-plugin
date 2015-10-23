@@ -12,13 +12,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-include __DIR__ . '/class-linkoscope-post-type.php';
-add_action('init', 'linkoscope_post_type_init');
-add_filter('rest_query_vars', 'linkoscope_add_rest_query');
+if ( ! class_exists( 'LinkoScope_Plugin' ) ) :
+	include_once __DIR__ . '/class-linkoscope-post-type.php';
+	include_once __DIR__ . '/class-linkoscope-capabilities.php';
+	include_once __DIR__ . '/class-linkoscope-comment-meta.php';
+	include_once __DIR__ . '/class-linkoscope-post-meta.php';
 
-include __DIR__ . '/class-linkoscope-capabilities.php';
-add_filter('user_has_cap', 'linkoscope_has_cap_filter', 10, 4);
+	class LinkoScope_Plugin{
+		public function run(){
+			(new LinkoScope_Post_Type())->run();
+			(new LinkoScope_Post_Meta())->run();
+			(new LinkoScope_Comment_Meta())->run();
+			(new LinkoScope_Post_Type())->run();
+			(new LinkoScope_Capabilities())->run();
+		}
+	}
 
-include __DIR__ . '/class-linkoscope-comment-meta.php';
-include __DIR__ . '/class-linkoscope-post-meta.php';
-add_action( 'rest_api_init', 'linkoscope_register_fields' );
+	(new LinkoScope_Plugin())->run();
+endif;
