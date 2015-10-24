@@ -1,4 +1,13 @@
 <?php
+/**
+ * Class LinkoScope_Post_Type
+ * Registers the new post type for LinkoScope.
+ *
+ * Created by Nabeel Sulieman.
+ * User: Nabeel
+ * Date: 2015-10-23
+ * Time: 12:11 PM
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
