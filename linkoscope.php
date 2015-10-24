@@ -18,15 +18,15 @@ if ( ! class_exists( 'LinkoScope_Plugin' ) ) :
 	include_once __DIR__ . '/class-linkoscope-comment-meta.php';
 	include_once __DIR__ . '/class-linkoscope-post-meta.php';
 
-	class LinkoScope_Plugin{
-		public function run(){
-			(new LinkoScope_Post_Type())->run();
-			(new LinkoScope_Post_Meta())->run();
-			(new LinkoScope_Comment_Meta())->run();
-			(new LinkoScope_Post_Type())->run();
-			(new LinkoScope_Capabilities())->run();
+	class LinkoScope_Plugin {
+		public function run() {
+			( new LinkoScope_Post_Type() )->run();
+			( new LinkoScope_Post_Meta() )->run();
+			( new LinkoScope_Comment_Meta() )->run();
+			( new LinkoScope_Post_Type() )->run();
+			( new LinkoScope_Capabilities() )->run();
 		}
 	}
 
-	(new LinkoScope_Plugin())->run();
+	( new LinkoScope_Plugin() )->run();
 endif;

@@ -14,22 +14,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'LinkoScope_Capabilities' ) ) :
-	class LinkoScope_Capabilities{
-		public function run(){
-			add_filter('user_has_cap', [$this, 'cap_filter'], 10, 4);
+	class LinkoScope_Capabilities {
+		public function run() {
+			add_filter( 'user_has_cap', [ $this, 'cap_filter' ], 10, 4 );
 		}
 
-		public function cap_filter($caps, $cap, $args, WP_User $user){
+		public function cap_filter( $caps, $cap, $args, WP_User $user ) {
 			$roles = $user->roles;
-			$cap = array_filter($cap, function($c){return preg_match('/linkoscope/', $c) == 1;});
-			foreach ($cap as $c){
-				$caps[$c] = $this->check_capability($c, $roles);
+			$cap = array_filter( $cap, function ( $c ) {
+				return preg_match( '/linkoscope/', $c ) == 1;
+			} );
+			foreach ( $cap as $c ) {
+				$caps[$c] = $this->check_capability( $c, $roles );
 			}
 
 			return $caps;
 		}
 
-		private function check_capability($cap, $roles){
+		private function check_capability( $cap, $roles ) {
 			$order = array(
 				'administrator' => 0,
 				'editor' => 1,
@@ -47,16 +49,16 @@ if ( ! class_exists( 'LinkoScope_Capabilities' ) ) :
 				'delete_others_linkoscope_links' => 'editor',
 			);
 
-			if (!isset($roleMap[$cap])){
+			if ( ! isset( $roleMap[$cap] ) ) {
 				return false;
 			}
 
-			foreach ($roles as $role){
-				if (!isset($order[$role])){
+			foreach ( $roles as $role ) {
+				if ( ! isset( $order[$role] ) ) {
 					return false;
 				}
 
-				if ($order[$role] <= $order[$roleMap[$cap]]){
+				if ( $order[$role] <= $order[$roleMap[$cap]] ) {
 					return true;
 				}
 			}
