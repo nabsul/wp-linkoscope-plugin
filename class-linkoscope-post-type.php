@@ -21,7 +21,8 @@ if ( ! class_exists( 'LinkoScope_Post_Type' ) ) :
 		}
 
 		public function post_type_init() {
-			$supports = array( 'title',
+			$supports = array(
+				'title',
 				'editor',
 				'author',
 				'content',
@@ -38,11 +39,12 @@ if ( ! class_exists( 'LinkoScope_Post_Type' ) ) :
 				'rest_base' => 'linkolink', // api root: `/wp/v2/linkolink`
 				'publicly_queryable' => true,
 				'exclude_from_search' => false,
-				'show_in_nav_menus' => false,
-				'show_ui' => false,
 				'supports' => $supports,
 				'capability_type' => 'linkoscope_link',
-				'map_meta_cap' => true,
+				'map_meta_cap' => false,
+				'capabilities' => array(
+					'create_posts' => 'create_linkoscope_links'
+				),
 			);
 
 			register_post_type( 'linkoscope_link', $typeArgs );
