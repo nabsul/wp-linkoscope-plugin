@@ -16,55 +16,62 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'LinkoScope_Capabilities' ) ) :
 	class LinkoScope_Capabilities {
 		public function run() {
-			add_filter( 'user_has_cap', [ $this, 'cap_filter' ], 10, 4 );
+			add_action( 'activate_linkoscope/linkoscope.php', [ $this, 'add_caps' ] );
+			add_action( 'deactivate_linkoscope/linkoscope.php', [ $this, 'delete_caps' ] );
 		}
 
-		public function cap_filter( $caps, $cap, $args, WP_User $user ) {
-			$roles = $user->roles;
-			$cap = array_filter( $cap, function ( $c ) {
-				return preg_match( '/linkoscope/', $c ) == 1;
-			} );
-			foreach ( $cap as $c ) {
-				$caps[$c] = $this->check_capability( $c, $roles );
-			}
-
-			return $caps;
-		}
-
-		private function check_capability( $cap, $roles ) {
-			$order = array(
-				'administrator' => 0,
-				'editor' => 1,
-			);
-
-			$roleMap = array(
-				'read_private_linkoscope_links' => 'administrator',
-				'publish_linkoscope_links' => 'administrator',
-
-				'edit_linkoscope_links' => 'administrator',
-				'edit_published_linkoscope_links' => 'administrator',
-				'edit_others_linkoscope_links' => 'administrator',
-
-				'delete_published_linkoscope_links' => 'editor',
-				'delete_others_linkoscope_links' => 'editor',
-			);
-
-			if ( ! isset( $roleMap[$cap] ) ) {
-				return false;
-			}
-
-			foreach ( $roles as $role ) {
-				if ( ! isset( $order[$role] ) ) {
-					return false;
-				}
-
-				if ( $order[$role] <= $order[$roleMap[$cap]] ) {
-					return true;
+		public function add_caps() {
+			foreach ( $this->caps as $roleName => $caps ) {
+				$role = get_role( $roleName );
+				foreach ( $caps as $cap ) {
+					$role->add_cap( $cap );
 				}
 			}
-
-			return false;
 		}
+
+		public function delete_caps() {
+			foreach ( $this->caps as $roleName => $caps ) {
+				$role = get_role( $roleName );
+				foreach ( $role->capabilities as $cap => $is_set ) {
+					if ( preg_match( '/linkoscope\_link/', $cap ) == 1 ) {
+						$role->remove_cap( $cap );
+					}
+				}
+			}
+		}
+
+		private $caps = array(
+			'administrator' => array(
+				'read_linkoscope_link',
+				'create_linkoscope_links',
+				'publish_linkoscope_links',
+				'delete_linkoscope_link',
+				'edit_linkoscope_link',
+				'edit_linkoscope_links',
+				'edit_others_linkoscope_links',
+			),
+			'editor' => array(
+				'read_linkoscope_link',
+				'create_linkoscope_links',
+				'publish_linkoscope_links',
+				'edit_linkoscope_link',
+				'edit_linkoscope_links',
+				'edit_others_linkoscope_links',
+			),
+			'author' => array(
+				'read_linkoscope_link',
+				'create_linkoscope_links',
+				'publish_linkoscope_links',
+				'delete_linkoscope_link',
+				'edit_linkoscope_link',
+			),
+			'contributor' => array(
+				'read_linkoscope_link',
+			),
+			'subscriber' => array(
+				'read_linkoscope_link',
+			),
+		);
 	}
 endif;
 
