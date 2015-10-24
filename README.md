@@ -14,7 +14,7 @@ This plugin must be installed for self-hosted sites.
 
 ## Installation
 
-1. Download to your plugins directory 
+1. Download to a folder named 'linkoscope' in your plugins directory
 2. Activate the plugin from the administration menu 
 
 ## Issue Tracking
