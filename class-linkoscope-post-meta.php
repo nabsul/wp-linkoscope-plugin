@@ -43,6 +43,13 @@ if ( ! class_exists( 'LinkoScope_Post_Meta' ) ) :
 			);
 			register_api_field( 'linkoscope_link', 'comment_count', $comment_count_callbacks );
 
+			$tags_callbacks = array(
+				'get_callback' => [ $this, 'get_tags' ],
+				'update_callback' => [ $this, 'set_tags' ],
+				'schema' => null,
+			);
+			register_api_field( 'linkoscope_link', 'tags', $tags_callbacks );
+
 			$raw = array(
 				'schema' => array(
 					'type' => 'string',
@@ -80,6 +87,24 @@ if ( ! class_exists( 'LinkoScope_Post_Meta' ) ) :
 		}
 
 		public function no_op( $value, $object, $field_name ) {
+		}
+
+		public function get_tags( $object, $field_name, $request ) {
+			$ret = [ ];
+			foreach ( wp_get_post_tags( $object['id'] ) as $tag ) {
+				$ret[$tag->term_id] = $tag->name;
+			}
+			return $ret;
+		}
+
+		public function set_tags( $value, $object, $field_name ) {
+			$tags = [ ];
+			foreach ( $value as $k => $v ) {
+				error_log( "Setting tag: $k" );
+				$tags[] = $k;
+			}
+
+			return wp_set_post_tags( $object->ID, $tags );
 		}
 	}
 endif;
